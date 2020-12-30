@@ -29,9 +29,7 @@ class Worker:
     def teardown(self) -> None:
         pass
 
-    def main(
-            self,
-    ) -> None:
+    def main(self) -> None:
         try:
             logging.info('Start')
             self.setup()
