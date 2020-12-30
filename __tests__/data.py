@@ -30,8 +30,7 @@ class Consumer1(Consumer):
 
 
 class Worker1(Worker):
-    @property
-    def args(self) -> Namespace:
+    def parse_args(self) -> Namespace:
         pass
 
     @property

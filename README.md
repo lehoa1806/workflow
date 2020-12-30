@@ -1,7 +1,16 @@
 # workflow
 A simple data processing workflow
 
-# Example
+# Introduction
+... loading ...
+# Examples
+### Test script
+```bash
+# Copy test.py to parent directory
+python3 -m test --length 10
+```
+
+### Usage example
 ```python
 from workflow.consumer import Consumer
 from workflow.pipeline import Pipeline
@@ -14,7 +23,7 @@ def get_stream():
     for i in range(10):
         yield {
             'operand1': 2 * i,
-            'operand2': 2 * i +1,
+            'operand2': 2 * i + 1,
             'operand3': 'unnecessary data',
         }
 
@@ -34,12 +43,11 @@ class SimpleConsumer(Consumer):
 
 
 class SimpleWorker(Worker):
-    @property
-    def args(self):
+    def parse_args(self):
         pass
 
     @property
-    def pipeline(self) -> Pipeline:
+    def pipeline(self):
         return Pipeline(
             stage=SimpleStage(),
         )

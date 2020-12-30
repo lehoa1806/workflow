@@ -7,8 +7,10 @@ from .producer import Producer
 
 
 class Worker:
-    @property
-    def args(self) -> Namespace:
+    def __init__(self) -> None:
+        self.args = self.parse_args()
+
+    def parse_args(self) -> Namespace:
         raise NotImplementedError
 
     @property
