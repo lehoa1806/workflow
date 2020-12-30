@@ -41,14 +41,14 @@ class MultiplyStage(Stage):
 
 class SimpleConsumer(Consumer):
     def process(self, item):
-        logging.info(item.get('sum'))
+        logging.info(
+            f'Result: Sum = {item["sum"]}, Multiply = {item["multiply"]}')
 
 
 class SimpleWorker(Worker):
     def parse_args(self):
         parser = argparse.ArgumentParser()
-        group = parser.add_mutually_exclusive_group()
-        group.add_argument(
+        parser.add_argument(
            '--length',
            type=int,
            required=True,
