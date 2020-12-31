@@ -2,6 +2,7 @@ import argparse
 import logging
 
 from workflow.consumer import Consumer
+from workflow.hybrid_consumer import HybridConsumer
 from workflow.pipeline import Pipeline
 from workflow.serial_producer import SerialProducer
 from workflow.stage import Stage
@@ -39,10 +40,54 @@ class MultiplyStage(Stage):
         yield {'multiply': item['operand1'] * item['operand2']}
 
 
-class SimpleConsumer(Consumer):
+class DictStage(Stage):
     def process(self, item):
         logging.info(
-            f'Result: Sum = {item["sum"]}, Multiply = {item["multiply"]}')
+            f'DictStage: operand1 = {item["operand1"]}, operand2 = {item["operand2"]}, '
+            f'sum = {item["sum"]}, multiply = {item["multiply"]}')
+        output = {
+            'operand1': item['operand1'],
+            'operand2': item['operand2'],
+            'sum': item['operand1'] + item['operand2'],
+            'multiply': item['operand1'] * item['operand2'],
+        }
+        yield {'dict': output}
+
+
+class ListStage(Stage):
+    def process(self, item):
+        logging.info(
+            f'ListStage: operand1 = {item["operand1"]}, operand2 = {item["operand2"]}, '
+            f'sum = {item["sum"]}, multiply = {item["multiply"]}')
+        output = [
+            item['operand1'],
+            item['operand2'],
+            item['operand1'] + item['operand2'],
+            item['operand1'] * item['operand2'],
+        ]
+        yield {'list': output}
+
+
+class SumConsumer(Consumer):
+    def process(self, item):
+        logging.info(
+            f'SumConsumer subscribed for: Sum = {item["sum"]}')
+
+
+class MultiplyConsumer(Consumer):
+    def process(self, item):
+        logging.info(
+            f'MultiplyConsumer subscribed for: Multiply = {item["multiply"]}')
+
+
+class DictListConsumer(Consumer):
+    def process(self, item):
+        logging.warning(
+            f'DictListConsumer wants a list of the two operands, '
+            f'sum and multiply results: = {item["list"]}')
+        logging.warning(
+            f'DictListConsumer also wants a dict of the two operands, '
+            f'sum and multiply results: = {item["dict"]}')
 
 
 class SimpleWorker(Worker):
@@ -63,12 +108,29 @@ class SimpleWorker(Worker):
             logged_columns=['operand1', 'operand2'],
         ).add_stage(
             stage=MultiplyStage(),
-            logged_columns=['sum'],
+            logged_columns=['operand1', 'operand2', 'sum'],
         )
 
     @property
     def consumer(self):
-        return SimpleConsumer()
+        list_consumer = HybridConsumer(
+            consumers=[DictListConsumer()],
+            pipeline=Pipeline(
+                DictStage(),
+                logged_columns=['operand1', 'operand2', 'sum', 'multiply'],
+            )
+        ).add_stage(
+            stage=ListStage(),
+            logged_columns=['dict'],
+        )
+
+        return HybridConsumer(
+            consumers=[list_consumer]
+        ).add_consumer(
+            consumer=SumConsumer()
+        ).add_consumer(
+            consumer=MultiplyConsumer(),
+        )
 
     @property
     def producer(self):

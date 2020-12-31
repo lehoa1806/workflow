@@ -1,8 +1,28 @@
 # workflow
 A simple data processing workflow
 
+```diagram
+data                        stage --- consumer
+  |                       /
+producer --- stage --- stage --- stage --- consumer
+                          \          \
+                           \           stage --- consumer
+                             consumer
+```
 # Introduction
-... loading ...
+### 1. Producers:
+- Producer: parse data to data stream
+- SingleItemProducer (input is a dictionary)
+- SerialProducer (input is an iterator)
+### 2. Stages:
+- Stage: a middle step to process the data
+- Pipeline: a sequence of stages
+### 3. Consumers:
+- Consumer: an endpoint to ingest output of pipeline
+- HybridConsumer: a consumer with its own pipeline; or a group of consumers
+### 4. Workers:
+- Worker: put these above stuffs together to create a complete data processing workflow
+
 # Examples
 ### Test script
 ```bash

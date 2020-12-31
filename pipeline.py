@@ -42,6 +42,7 @@ class Pipeline(BaseStage):
         logged_columns: List[str] = None,
         name: str = None,
     ) -> 'Pipeline':
+        # TODO: Doesn't work if isinstace(stage, Pipeline). Correct this!!!
         name = name or stage.name
         self.name = f'{self.name}:{name}'
         self.stages.append({
