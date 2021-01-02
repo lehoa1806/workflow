@@ -21,8 +21,9 @@ producer --- stage --- stage --- stage --- consumer
 - Consumer: an endpoint to ingest output of pipeline
 - HybridConsumer: a consumer with its own pipeline; or a group of consumers
 ### 4. Workers:
-- Worker: put these above stuffs together to create a complete data processing workflow
-
+Put these above stuffs together to create a complete data processing workflow
+- Job: receives config from terminal
+- Task: config is set while initializing the object.
 # Examples
 ### Test script
 ```bash

@@ -3,10 +3,11 @@ import logging
 
 from workflow.consumer import Consumer
 from workflow.hybrid_consumer import HybridConsumer
+from workflow.job import Job
 from workflow.pipeline import Pipeline
 from workflow.serial_producer import SerialProducer
 from workflow.stage import Stage
-from workflow.worker import Worker
+from workflow.task import Task
 
 
 def get_stream(x: int = 10):
@@ -90,7 +91,7 @@ class DictListConsumer(Consumer):
             f'sum and multiply results: = {item["dict"]}')
 
 
-class SimpleWorker(Worker):
+class SimpleJob(Job):
     def parse_args(self):
         parser = argparse.ArgumentParser()
         parser.add_argument(
@@ -137,14 +138,55 @@ class SimpleWorker(Worker):
         return SerialProducer(get_stream(self.args.length))
 
 
+class SimpleTask(Task):
+    def __init__(self, **kwargs) -> None:
+        self.length = kwargs.get('length', 10)
+
+    @property
+    def pipeline(self) -> Pipeline:
+        return Pipeline(
+            stage=SumStage(),
+            logged_columns=['operand1', 'operand2'],
+        ).add_stage(
+            stage=MultiplyStage(),
+            logged_columns=['operand1', 'operand2', 'sum'],
+        )
+
+    @property
+    def consumer(self):
+        list_consumer = HybridConsumer(
+            consumers=[DictListConsumer()],
+            pipeline=Pipeline(
+                DictStage(),
+                logged_columns=['operand1', 'operand2', 'sum', 'multiply'],
+            )
+        ).add_stage(
+            stage=ListStage(),
+            logged_columns=['dict'],
+        )
+
+        return HybridConsumer(
+            consumers=[list_consumer]
+        ).add_consumer(
+            consumer=SumConsumer()
+        ).add_consumer(
+            consumer=MultiplyConsumer(),
+        )
+
+    @property
+    def producer(self):
+        return SerialProducer(get_stream(self.length))
+
+
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
-    # Step by step
-    # stream = SerialProducer(get_stream()).stream
-    # result = SimpleStage().run(stream)
-    # SimpleConsumer().consume(result)
+    # Call Task
+    logging.info(f'=== Process SimpleTask ===')
+    SimpleTask().process_task(length=5)
+    # 1 5 9 13 17
+
+    # Call Job
+    logging.info(f'=== Process SimpleJOB ===')
+    SimpleJob().main()
     # 1 5 9 13 17 21 25 29 33 37
 
-    # Call the worker
-    SimpleWorker().main()
-    # 1 5 9 13 17 21 25 29 33 37

@@ -6,7 +6,7 @@ from .pipeline import Pipeline
 from .producer import Producer
 
 
-class Worker:
+class Job:
     def __init__(self) -> None:
         self.args = self.parse_args()
 
