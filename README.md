@@ -34,10 +34,10 @@ python3 -m test --length 10
 ### Usage example
 ```python
 from workflow.consumer import Consumer
+from workflow.job import Job
 from workflow.pipeline import Pipeline
 from workflow.serial_producer import SerialProducer
 from workflow.stage import Stage
-from workflow.worker import Worker
 
 
 def get_stream():
@@ -63,7 +63,7 @@ class SimpleConsumer(Consumer):
         print(item.get('sum'))
 
 
-class SimpleWorker(Worker):
+class SimpleJob(Job):
     def parse_args(self):
         pass
 
@@ -90,6 +90,6 @@ if __name__ == "__main__":
     # 1 5 9 13 17 21 25 29 33 37
 
     # Call the worker
-    SimpleWorker().main()
+    SimpleJob().main()
     # 1 5 9 13 17 21 25 29 33 37
 ```
