@@ -3,11 +3,11 @@ from argparse import Namespace
 from typing import Dict, Iterator, List
 
 from ..consumer import Consumer
+from ..job import Job
 from ..pipeline import Pipeline
 from ..producer import Producer
 from ..single_item_producer import SingleItemProducer
 from ..stage import Stage
-from ..worker import Worker
 
 
 class Stage1(Stage):
@@ -29,7 +29,7 @@ class Consumer1(Consumer):
         logging.info(item)
 
 
-class Worker1(Worker):
+class SimpleJob(Job):
     def parse_args(self) -> Namespace:
         pass
 

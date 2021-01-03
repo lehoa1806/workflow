@@ -2,7 +2,7 @@ import logging
 
 from mock import MagicMock, call, patch
 
-from .data import Worker1
+from .data import SimpleJob
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -12,7 +12,7 @@ logger.setLevel(logging.INFO)
 def test_main(
     mock_log: MagicMock,
 ) -> None:
-    Worker1().main()
+    SimpleJob().main()
 
     assert mock_log.call_args_list == [
         call(logging.INFO, 'Start', ()),
