@@ -11,7 +11,7 @@ class Stage(BaseStage):
         raise NotImplementedError
 
     def teardown(self, item: Dict) -> Iterator:
-        yield Start()
+        yield Stop()
 
     def run(self, source: Iterable = None, **kwargs) -> Iterator:
         source = source or []
