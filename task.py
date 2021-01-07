@@ -35,7 +35,6 @@ class Task:
         except Exception as ex:
             logging.warning('Failed')
             logging.exception(str(ex))
-            raise SystemExit(1)
         finally:
             self.teardown()
             logging.info('Stop')
