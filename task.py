@@ -1,5 +1,5 @@
 import logging
-
+import warnings
 from .consumer import Consumer
 from .pipeline import Pipeline
 from .producer import Producer
@@ -7,7 +7,7 @@ from .producer import Producer
 
 class Task:
     def __init__(self, **kwargs) -> None:
-        pass
+        self.name = kwargs.get('name') or self.__class__.__name__
 
     @property
     def pipeline(self) -> Pipeline:
@@ -29,15 +29,18 @@ class Task:
 
     def main(self) -> None:
         try:
-            logging.info('Start')
+            warnings.warn(f'{self.name} started ...')
+            logging.info(f'{self.name} started ...')
             self.setup()
             self.consumer.consume(self.pipeline.run(self.producer.stream))
         except Exception as ex:
-            logging.warning('Failed')
+            warnings.warn(f'{self.name} failed: {str(ex)}')
+            logging.warning(f'{self.name} failed ...')
             logging.exception(str(ex))
         finally:
             self.teardown()
-            logging.info('Stop')
+            warnings.warn(f'{self.name} stopped ...')
+            logging.info(f'{self.name} stopped ...')
 
     @classmethod
     def process_task(cls, **kwargs) -> None:
