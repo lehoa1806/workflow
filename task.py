@@ -1,5 +1,7 @@
 import logging
+import traceback
 import warnings
+
 from .consumer import Consumer
 from .pipeline import Pipeline
 from .producer import Producer
@@ -34,7 +36,7 @@ class Task:
             self.setup()
             self.consumer.consume(self.pipeline.run(self.producer.stream))
         except Exception as ex:
-            warnings.warn(f'{self.name} failed: {str(ex)}')
+            warnings.warn(f'{self.name} failed: {traceback.format_exc()}')
             logging.warning(f'{self.name} failed ...')
             logging.exception(str(ex))
         finally:
