@@ -1,9 +1,13 @@
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Set
 
 from .common import Start, Stop
 
 
 class Consumer:
+    @property
+    def required_columns(self) -> Set:
+        return set()
+
     def setup(self, item: Dict) -> None:
         pass
 
@@ -20,4 +24,6 @@ class Consumer:
             elif isinstance(item, Stop):
                 self.teardown(item)
             else:
+                if self.required_columns and not self.required_columns.issubset(set(item.keys())):
+                    raise ValueError(f'Invalid data {item}. Required columns: {self.required_columns}.')
                 self.process(item)
