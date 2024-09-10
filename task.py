@@ -8,7 +8,17 @@ from .producer import Producer
 
 
 class Task:
+    """
+    A high-level class designed to orchestrate the execution of a data
+    processing task, integrating producers, pipelines, and consumers in a
+    cohesive workflow.
+    """
     def __init__(self, **kwargs) -> None:
+        """
+        Initializes the Task with optional configuration parameters.
+
+        :param kwargs: Configuration parameters for the task.
+        """
         self.name = kwargs.get('name') or self.__class__.__name__
 
     @property
@@ -46,4 +56,11 @@ class Task:
 
     @classmethod
     def process_task(cls, **kwargs) -> None:
+        """
+        Class method to instantiate and execute the task with provided
+        parameters.
+
+        :param kwargs: Configuration parameters for creating and running the
+                       task instance.
+        """
         cls(**kwargs).main()
